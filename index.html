@@ -23,16 +23,28 @@
         .hero-section {
             background-color: #0f172a; 
             color: #f8fafc;
-            padding: 100px 0;
+            /* Extra top padding to make room for photo */
+            padding: 80px 0 100px 0;
             text-align: center;
             border-bottom: 4px solid #94a3b8;
             margin-bottom: 50px;
+        }
+
+        /* Profile Photo Styling */
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%; /* Makes it circular */
+            border: 6px solid #f8fafc; /* White frame */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            object-fit: cover; /* Ensures image isn't squished */
+            margin-bottom: 25px;
         }
         
         /* Professional Serif Font for Name */
         .name-title {
             font-family: 'Merriweather', serif;
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 15px;
             letter-spacing: -0.5px;
@@ -138,6 +150,8 @@
 
     <header class="hero-section">
         <div class="container">
+            <img src="YOUR_FILENAME.ext" alt="Christian Brown Portrait" class="profile-photo shadow">
+
             <h1 class="name-title">Christian Brown</h1>
             <div class="byu-badge">
                 Freshman Finance Student at Brigham Young University
