@@ -1,1 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Player Guesser</title>
+    <style>
+        /* CSS Styling - NBA/Basketball Theme */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a; /* Dark background */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
+        .game-container {
+            background: #2c3e50; /* Darker navy blue */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 3px solid #f39c12; /* Orange accent */
+        }
+
+        h1 {
+            color: #f39c12; /* NBA Orange */
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Clue Display Area */
+        #clue-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 25px 0;
+            text-align: left;
+            min-height: 150px;
+        }
+
+        #clue-list li {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            font-size: 16px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        /* Input and Button Styles */
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: none;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+
+        #submit-btn { background-color: #27ae60; color: white; }
+        #submit-btn:hover { background-color: #219150; }
+
+        #clue-btn { background-color: #3498db; color: white; }
+        #clue-btn:hover { background-color: #2980b9; }
+
+        #play-again-btn { background-color: #f39c12; color: white; margin-top: 20px;}
+        #play-again-btn:hover { background-color: #d35400; }
+
+        /* Feedback Area (Correct/Wrong/Game Over) */
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            min-height: 24px;
+        }
+        .correct { color: #2ecc71; }
+        .wrong { color: #e74c3c; }
+
+        /* Utility classes for hiding/showing elements */
+        .hidden { display: none !important; }
+
+        /* Requirement: Link back to scratch page */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            text-decoration: none;
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        .back-link:hover { color: #f39c12; }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>NBA Player Guesser</h1>
+        <p>Guess the NBA player based on the clues!</p>
+
+        <p>Guesses Left: <strong id="guesses-left">3</strong></p>
+
+        <ul id="clue-list"></ul>
+
+        <div id="input-area">
+            <input type="text" id="guess-input" placeholder="Enter Player Name (e.g., LeBron James)">
+            <button id="submit-btn">Submit Guess</button>
+            <button id="clue-btn">Get Next Clue</button>
+        </div>
+
+        <p id="feedback"></p>
+        <button id="play-again-btn" class="hidden">Play Again</button>
+
+        <a href="scratch.html" class="back-link">&larr; Return to Scratch Page</a>
+    </div>
+
+    <script>
+        // JavaScript Game Logic
+
+        // 1. Dataset of Players (Single page app constraint)
+        const playerData = [
+            {
+                name: "LeBron James",
+                clues: ["Position: Forward", "Teams: Cavaliers, Heat, Lakers", "Drafted: 2003, 1st Overall", "Known as 'The King'", "NBA All-Time Leading Scorer"]
+            },
+            {
+                name: "Stephen Curry",
+                clues: ["Position: Guard", "Team: Golden State Warriors", "College: Davidson", "Known as 'The Baby-Faced Assassin'", "Holds record for most 3-pointers made"]
+            },
+            {
+                name: "Kevin Durant",
+                clues: ["Position: Forward", "Teams: Sonics/Thunder, Warriors, Nets, Suns", "Nicknamed 'KD' or 'The Slim Reaper'", "Won 2 NBA Championships", "Known for elite scoring ability"]
+            },
+            {
+                name: "Giannis Antetokounmpo",
+                clues: ["Position: Forward", "Team: Milwaukee Bucks", "Country: Greece", "Known as 'The Greek Freak'", "Won back-to-back MVPs (2019, 2020)"]
+            },
+            {
+                name: "Nikola Jokic",
+                clues: ["Position: Center", "Team: Denver Nuggets", "Country: Serbia", "Nicknamed 'The Joker'", "First Center to win MVP since Shaq"]
+            }
+        ];
+
+        // 2. Game State Variables
+        let currentPlayer;
+        let currentClueIndex;
+        let guessesLeft;
+        let gameOver;
+
+        // 3. DOM Elements
+        const clueList = document.getElementById('clue-list');
+        const guessInput = document.getElementById('guess-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const clueBtn = document.getElementById('clue-btn');
+        const feedback = document.getElementById('feedback');
+        const guessesLeftDisplay = document.getElementById('guesses-left');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const inputArea = document.getElementById('input-area');
+
+        // 4. Function: Initialize a new game
+        function startGame() {
+            gameOver = false;
+            currentClueIndex = 0;
+            guessesLeft = 3;
+            feedback.textContent = "";
+            feedback.className = "";
+            clueList.innerHTML = "";
+            guessInput.value = "";
+            
+            // Show input area, hide play again button
+            inputArea.classList.remove('hidden');
+            playAgainBtn.classList.add('hidden');
+            
+            // Select random player
+            const randomIndex = Math.floor(Math.random() * playerData.length);
+            currentPlayer = playerData[randomIndex];
+            
+            updateDisplay();
+            addClue(); // Show first clue immediately
+        }
+
+        // 5. Function: Add next clue to the list
+        function addClue() {
+            if (currentClueIndex < currentPlayer.clues.length) {
+                const li = document.createElement('li');
+                li.textContent = `Clue ${currentClueIndex + 1}: ${currentPlayer.clues[currentClueIndex]}`;
+                clueList.appendChild(li);
+                currentClueIndex++;
+                
+                // Vibrate effect on adding clue (minor flair)
+                li.style.transform = "translateX(5px)";
+                setTimeout(()=> li.style.transform = "translateX(0px)", 100);
+
+            } else {
+                feedback.textContent = "No more clues available!";
+                feedback.className = "wrong";
+            }
+        }
+
+        // 6. Function: Update guesses display
+        function updateDisplay() {
+            guessesLeftDisplay.textContent = guessesLeft;
+        }
+
+        // 7. Function: Handle guess submission
+        function handleGuess() {
+            if (gameOver) return;
+
+            const userGuess = guessInput.value.trim();
+            
+            if (userGuess === "") {
+                feedback.textContent = "Please enter a name.";
+                feedback.className = "";
+                return;
+            }
+
+            // Compare guess (case-insensitive)
+            if (userGuess.toLowerCase() === currentPlayer.name.toLowerCase()) {
+                endGame(true);
+            } else {
+                guessesLeft--;
+                updateDisplay();
+                guessInput.value = ""; // Clear input for next guess
+                
+                if (guessesLeft > 0) {
+                    feedback.textContent = `Wrong! "${userGuess}" is not correct. Try again.`;
+                    feedback.className = "wrong";
+                } else {
+                    endGame(false);
+                }
+            }
+        }
+
+        // 8. Function: End game (win or loss)
+        function endGame(win) {
+            gameOver = true;
+            inputArea.classList.add('hidden'); // Hide controls
+            playAgainBtn.classList.remove('hidden'); // Show play again
+
+            if (win) {
+                feedback.textContent = `CORRECT! It was ${currentPlayer.name}! 🏀`;
+                feedback.className = "correct";
+            } else {
+                feedback.textContent = `GAME OVER! The player was ${currentPlayer.name}.`;
+                feedback.className = "wrong";
+                // Show all remaining clues if lost
+                clueList.innerHTML = ""; 
+                currentPlayer.clues.forEach((clue, index) => {
+                     const li = document.createElement('li');
+                     li.textContent = `Clue ${index + 1}: ${clue}`;
+                     clueList.appendChild(li);
+                });
+            }
+        }
+
+        // 9. Event Listeners
+        submitBtn.addEventListener('click', handleGuess);
+        clueBtn.addEventListener('click', addClue);
+        playAgainBtn.addEventListener('click', startGame);
+        
+        // Allow pressing "Enter" key to submit guess
+        guessInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleGuess();
+            }
+        });
+
+        // Start game on load
+        startGame();
+
+    </script>
+</body>
+</html>
