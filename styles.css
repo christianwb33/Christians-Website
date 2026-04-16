@@ -1,1 +1,81 @@
+/* styles.css */
 
+/* Requirement: Custom Background Color & Font Family & Font Color */
+body {
+    background-color: #e9ecef;
+    font-family: 'Georgia', serif; 
+    color: #2c3e50; 
+    margin: 0;
+    padding: 30px;
+}
+
+/* Requirement: Div 1 for positioning/styling */
+.site-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 45px;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
+    border-top: 8px solid #1e5631; /* Adds up to 4+ total style definitions */
+}
+
+/* Requirement: Div 2 */
+.story-block {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+}
+
+/* Requirement: Div 3 */
+.media-block {
+    border-top: 1px solid #dee2e6;
+    padding-top: 35px;
+    text-align: center;
+}
+
+/* Updated Gallery Grid for Smaller Images */
+.gallery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.gallery-item {
+    text-align: center;
+}
+
+/* Forces images to be smaller and perfectly square */
+.custom-image {
+    width: 150px; 
+    height: 150px; 
+    object-fit: cover; 
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border: 2px solid #1e5631;
+}
+
+.caption {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    font-style: italic;
+    margin-top: 5px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Links styling */
+.navigation-menu a {
+    color: #1e5631; 
+    text-decoration: none;
+    font-family: 'Arial', sans-serif; 
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 1px;
+}
+
+.navigation-menu a:hover {
+    color: #4c9a2a;
+}
